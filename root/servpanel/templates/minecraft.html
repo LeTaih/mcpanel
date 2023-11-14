@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+  <head> 
+    <title>Panel Minecraft</title>
+    <link rel='icon' href='https://i.imgur.com/R0XQf5p.png'>
+  </head>
+
+
+  <link href="{{url_for('static', filename='minecraft.css')}}" rel="stylesheet" type="text/css"/>
+
+<h1><img src="https://i.imgur.com/uvd86MC.png" alt="Minecraft Server Panelo" width="400" height="100" ></h1>
+
+<div class="mc-menu">
+    <div class="mc-button full">
+        <div class="title" onclick="appendTextToTextarea('Starting Server...');startserver();">Start</div>
+    </div>
+    <div class="mc-button full">
+        <div class="title" onclick="appendTextToTextarea('Restarting Server...');restartserver();">Restart</div>
+    </div>
+    <div class="mc-button full">
+        <div class="title" onclick="appendTextToTextarea('Stoping Server...');stopserver();">Stop</div>
+    </div>
+</div>
+
+<div class="console">
+    <textarea rows="20" cols="80" id="TITLE" disabled style="resize: none;padding-left:5px;font-family: Minecraftia;width: 100%;">
+    </textarea>
+    <form onsubmit="sendcommand(event);" method="post">
+        <input class="command" id="commandInput" required>
+        <input type="submit" style="display: none;">
+    </form>
+</div>
+
+<script>
+    function appendTextToTextarea(text) {
+    const textarea = document.getElementById("TITLE");
+
+    if (textarea) {
+        textarea.value += "\n" + text;
+    } else {
+        console.error("Textarea with the specified ID not found.");
+    }
+    }
+</script>
+
+<script>
+    function sendcommand(event) {
+      event.preventDefault(); // Empêcher le comportement par défaut du formulaire
+
+      const commandInput = document.getElementById('commandInput');
+      const command = commandInput.value;
+
+      fetch('/sendcommand', {
+        method: 'POST',
+        body: JSON.stringify({ command }), // Vous pouvez ajuster le format des données
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        appendTextToTextarea(data.output);
+        commandInput.value = "";
+      })
+      .catch(error => {
+        appendTextToTextarea("Erreur lors de l'envoi de commande : " + error);
+        console.error('Erreur lors de la requête AJAX :', error);
+        commandInput.value = "";
+      });
+    }
+    function startserver() {
+      fetch('/startserver', {
+        method: 'POST'
+      })
+      .then(response => response.json())
+      .then(data => {
+        appendTextToTextarea(data.output);
+      })
+      .catch(error => {
+        appendTextToTextarea("Erreur lors du lancement du serveur : " + error);
+        console.error('Erreur lors de la requête AJAX :', error);
+      });
+    }
+    function restartserver() {
+      fetch('/restartserver', {
+        method: 'POST'
+      })
+      .then(response => response.json())
+      .then(data => {
+        appendTextToTextarea(data.output);
+      })
+      .catch(error => {
+        appendTextToTextarea("Erreur lors du relancement du serveur : " + error);
+        console.error('Erreur lors de la requête AJAX :', error);
+      });
+    }
+    function stopserver() {
+      fetch('/stopserver', {
+        method: 'POST'
+      })
+      .then(response => response.json())
+      .then(data => {
+        appendTextToTextarea(data.output);
+      })
+      .catch(error => {
+        appendTextToTextarea("Erreur lors de l'arrêt du serveur : " + error);
+        console.error('Erreur lors de la requête AJAX :', error);
+      });
+    }
+  </script>
+
+</html>

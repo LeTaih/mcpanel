@@ -1,0 +1,11 @@
+[Unit]
+Description=Serveur Minecraft
+
+[Service]
+ExecStart=/home/amp/.ampdata/instances/LeBonLaBrute/start.sh
+WorkingDirectory=/home/amp/.ampdata/instances/LeBonLaBrute
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target
